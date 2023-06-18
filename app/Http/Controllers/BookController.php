@@ -14,7 +14,9 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
+        $books = Book::all();
+
+        return view('books.index', compact('books'));
     }
 
     /**
@@ -24,7 +26,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        //
+        return view('books.create');
     }
 
     /**
@@ -35,18 +37,21 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validatedData = $request->validate([
+            'isbn' => 'required|unique:l_book',
+            'title' => 'required',
+            'author' => 'required',
+            'publisher' => 'required',
+            'publisher_year' => 'required',
+            'short_description' => 'required',
+            'cover' => 'required',
+            'genre_id' => 'required',
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Book $book)
-    {
-        //
+        Book::create($validatedData);
+
+        // Redirect to the desired page after successful creation
+        return redirect()->route('books.index')->with('success', 'Book created successfully');
     }
 
     /**
@@ -57,7 +62,7 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        //
+        return view('books.edit', compact('book'));
     }
 
     /**
@@ -69,7 +74,20 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
-        //
+        $validatedData = $request->validate([
+            'title' => 'required',
+            'author' => 'required',
+            'publisher' => 'required',
+            'publisher_year' => 'required',
+            'short_description' => 'required',
+            'cover' => 'required',
+            'genre_id' => 'required',
+        ]);
+
+        $book->update($validatedData);
+
+        // Redirect to the desired page after successful update
+        return redirect()->route('books.index')->with('success', 'Book updated successfully');
     }
 
     /**
@@ -80,6 +98,9 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        //
+        $book->delete();
+
+        // Redirect to the desired page after successful deletion
+        return redirect()->route('books.index')->with('success', 'Book deleted successfully');
     }
 }
